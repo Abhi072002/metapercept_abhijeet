@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body[{
+      font-family: Arial, sans-serif:
+    }]
+    table {
+    
+      width: 50%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      border: 1pt solid #d8d9da;
+    }
+
+    th, td {
+      border: 1pt solid #d8d9da;
+      text-align: left;
+      padding: 10px;
+      text-align: center;
+      font-size: 12pt;
+    }
+
+    th {
+      background-color: #d6efed;
+    }
+  </style>
+</head>
+<body>
+
+<table id="employeeTable">
+  <thead>
+    <tr>
+      <th>Employee Name</th>
+      <th>Designation</th>
+      <th>Date of Joining</th>
+      <th>Address</th>
+      <th>Salary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Abhijeet Vishwakarma</td>
+      <td>Technical Writer</td>
+      <td>2022-01-01</td>
+      <td>123 Main St</td>
+      <td>6LPA</td>
+    </tr>
+    <!-- Add more employee details as needed -->
+  </tbody>
+</table>
+
+<script>
+  // XSLT for filtering employees based on criteria
+  const xsltFilter = `
+    <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+      <xsl:template match="/">
+        <table id="employeeTable">
+          <thead>
+            <tr>
+              <th>Employee Name</th>
+              <th>Designation</th>
+              <th>Date of Joining</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filter employees based on conditions -->
+            <xsl:apply-templates select="//employee[Designation='Technical Writer']"/>
+            <xsl:apply-templates select="//employee[Salary > 500000 and Salary < 700000]"/>
+          </tbody>
+        </table>
+      </xsl:template>
+
+      <!-- Template to display selected employee details -->
+      <xsl:template match="employee">
+        <tr>
+          <td><xsl:value-of select="EmployeeName"/></td>
+          <td><xsl:value-of select="Designation"/></td>
+          <td><xsl:value-of select="DateOfJoining"/></td>
+        </tr>
+      </xsl:template>
+    </xsl:stylesheet>
+  `;
+
+  // XML data representing employee details
+  const xmlData = `
+    <employees>
+      <employee>
+        <EmployeeName>Abhijeet Vishwakarma</EmployeeName>
+        <Designation>Technical Writer</Designation>
+        <DateOfJoining>2022-01-01</DateOfJoining>
+        <Address>123 Main St</Address>
+        <Salary>600000</Salary>
+      </employee>
+      <!-- Add more employee details as needed -->
+    </employees>
+  `;
+
+  // Transform XML data using XSLT
+  const parser = new DOMParser();
+  const xmlDoc = parser.parseFromString(xmlData, "application/xml");
+  const xslStylesheet = new DOMParser().parseFromString(xsltFilter, "application/xml");
+  const xsltProcessor = new XSLTProcessor();
+  xsltProcessor.importStylesheet(xslStylesheet);
+  const resultDocument = xsltProcessor.transformToDocument(xmlDoc);
+
+  // Display the result in the document
+  document.body.appendChild(resultDocument.documentElement);
+</script>
+
+</body>
+</html>
